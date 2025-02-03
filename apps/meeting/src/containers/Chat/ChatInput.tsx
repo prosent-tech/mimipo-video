@@ -28,7 +28,7 @@ export default function ChatInput() {
         value={message}
         onChange={handleMessageChange}
         onKeyPress={handleKeyPress}
-        placeholder="Message all attendees"
+        placeholder="出席者全員にメッセージを送信する"
       />
     </StyledChatInputContainer>
   );

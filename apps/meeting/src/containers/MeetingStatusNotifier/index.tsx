@@ -32,7 +32,7 @@ const MeetingStatusNotifier: React.FC = () => {
         setStatus('connecting');
         dispatch({
           type: ActionType.ADD,
-          payload: getMeetingStatusPayload('Meeting connecting...', Severity.INFO),
+          payload: getMeetingStatusPayload('ミーティングに接続中です...', Severity.INFO),
         });
         break;
       case MeetingStatus.Succeeded:
@@ -40,12 +40,12 @@ const MeetingStatusNotifier: React.FC = () => {
         if (status === 'reconnecting') {
           dispatch({
             type: ActionType.ADD,
-            payload: getMeetingStatusPayload('Meeting reconnected', Severity.SUCCESS),
+            payload: getMeetingStatusPayload('ミーティングに再接続しました', Severity.SUCCESS),
           });
         } else {
           dispatch({
             type: ActionType.ADD,
-            payload: getMeetingStatusPayload('Meeting connected', Severity.SUCCESS),
+            payload: getMeetingStatusPayload('ミーティングに繋がりました', Severity.SUCCESS),
           });
         }
         break;
@@ -53,7 +53,7 @@ const MeetingStatusNotifier: React.FC = () => {
         setStatus('reconnecting');
         dispatch({
           type: ActionType.ADD,
-          payload: getMeetingStatusPayload('Meeting reconnecting...', Severity.WARNING),
+          payload: getMeetingStatusPayload('ミーティングに再接続中です...', Severity.WARNING),
         });
         break;
       case MeetingStatus.Failed:

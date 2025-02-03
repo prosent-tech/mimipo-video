@@ -8,8 +8,6 @@ import {
   NavbarHeader,
   NavbarItem,
   Attendees,
-  Eye,
-  SignalStrength,
   Flex,
   ZoomIn,
   ZoomOut,
@@ -19,7 +17,6 @@ import {
 
 import { useNavigation } from '../../providers/NavigationProvider';
 import { useAppState } from '../../providers/AppStateProvider';
-import { LocalMediaStreamMetrics } from '../LocalMediaStreamMetrics';
 import { Layout } from '../../types';
 import GalleryLayout from '../../components/icons/GalleryLayout';
 import FeaturedLayout from '../../components/icons/FeaturedLayout';
@@ -27,23 +24,23 @@ import { useVideoTileGridControl } from '../../providers/VideoTileGridProvider';
 
 const Navigation: React.FC = () => {
   const { toggleRoster, closeNavbar, toggleChat } = useNavigation();
-  const { theme, toggleTheme, layout, setLayout, priorityBasedPolicy } = useAppState();
+  const { layout, setLayout, priorityBasedPolicy } = useAppState();
   const { sharingAttendeeId } = useContentShareState();
   const { zoomIn, zoomOut } = useVideoTileGridControl();
 
   return (
     <Navbar className="nav" flexDirection="column" container>
-      <NavbarHeader title="Navigation" onClose={closeNavbar} />
+      <NavbarHeader title="ナビゲーション" onClose={closeNavbar} />
       <Flex css="margin-top: 0rem;">
         <NavbarItem
           icon={<Attendees />}
           onClick={toggleRoster}
-          label="Attendees"
+          label="参加者"
         />
         <NavbarItem
           icon={<Chat />}
           onClick={toggleChat}
-          label="Chat"
+          label="チャット"
         />
         <NavbarItem
           icon={
@@ -61,7 +58,7 @@ const Navigation: React.FC = () => {
             }
           }}
           disabled={!!sharingAttendeeId}
-          label="Switch View"
+          label="表示を変更する"
         />
         {layout === Layout.Gallery && priorityBasedPolicy &&
           <>
@@ -78,22 +75,6 @@ const Navigation: React.FC = () => {
             />
           </>
         }
-      </Flex>
-      <Flex marginTop="auto">
-        <NavbarItem
-          icon={<Eye />}
-          onClick={toggleTheme}
-          label={theme === 'light' ? 'Dark mode' : 'Light mode'}
-        />
-        <NavbarItem
-          icon={<SignalStrength />}
-          onClick={(): void => {
-            // do nothing
-          }}
-          label="Media metrics"
-        >
-          <LocalMediaStreamMetrics />
-        </NavbarItem>
       </Flex>
     </Navbar>
   );

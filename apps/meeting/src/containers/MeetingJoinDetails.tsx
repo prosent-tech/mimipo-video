@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import {
   PrimaryButton,
   Flex,
-  Label,
   useMeetingManager,
   Modal,
   ModalBody,
@@ -22,7 +21,7 @@ const MeetingJoinDetails = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const { meetingId, localUserName } = useAppState();
+  const { meetingId } = useAppState();
 
   const handleJoinMeeting = async () => {
     setIsLoading(true);
@@ -41,12 +40,9 @@ const MeetingJoinDetails = () => {
     <>
       <Flex container alignItems="center" flexDirection="column">
         <PrimaryButton
-          label={isLoading ? 'Loading...' : 'Join meeting'}
+          label={isLoading ? 'Loading...' : 'ミーティングに参加する'}
           onClick={handleJoinMeeting}
         />
-        <Label style={{ margin: '.75rem 0 0 0' }}>
-          Joining meeting <b>{meetingId}</b> as <b>{localUserName}</b>
-        </Label>
       </Flex>
       {error && (
         <Modal size="md" onClose={(): void => setError('')}>

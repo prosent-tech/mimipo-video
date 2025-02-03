@@ -19,7 +19,7 @@ const NoMeetingRedirect: React.FC<PropsWithChildren> = ({ children }) => {
 
   const payload: { severity: Severity; message: string, autoClose: boolean } = {
     severity: Severity.INFO,
-    message: 'No meeting found, please enter a valid meeting Id',
+    message: '会議が見つかりません。有効な会議 ID を入力してください',
     autoClose: true,
   };
 

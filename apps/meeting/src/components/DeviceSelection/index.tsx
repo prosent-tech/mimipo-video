@@ -3,17 +3,15 @@
 
 import React from 'react';
 
-import { StyledWrapper, StyledAudioGroup, StyledVideoGroup } from './Styled';
-import MicrophoneDevices from './MicrophoneDevices';
-import SpeakerDevices from './SpeakerDevices';
+import { StyledWrapper, StyledVideoGroup } from './Styled';
 import CameraDevices from './CameraDevices';
 
 const DeviceSelection = () => (
   <StyledWrapper>
-    <StyledAudioGroup>
+    {/* <StyledAudioGroup>
       <MicrophoneDevices />
       <SpeakerDevices />
-    </StyledAudioGroup>
+    </StyledAudioGroup> */}
     <StyledVideoGroup>
       <CameraDevices />
     </StyledVideoGroup>

@@ -39,19 +39,19 @@ const MeetingControls: React.FC = () => {
       <ControlBar
         className="controls-menu"
         layout="undocked-horizontal"
-        showLabels
+        showLabels={false}
       >
         <ControlBarButton
           className="mobile-toggle"
           icon={<Dots />}
           onClick={handleToggle}
-          label="Menu"
+          label=""
         />
-        { isWebAudioEnabled ? <AudioInputVFControl /> :  <AudioInputControl /> }
-        { videoTransformsEnabled ? <VideoInputTransformControl /> : <VideoInputControl/> }
-        <ContentShareControl />
-        <AudioOutputControl />
-        <EndMeetingControl />
+        { isWebAudioEnabled ? <AudioInputVFControl muteLabel='' unmuteLabel='' /> :  <AudioInputControl muteLabel='' unmuteLabel='' /> }
+        { videoTransformsEnabled ? <VideoInputTransformControl label='' /> : <VideoInputControl label='' /> }
+        <ContentShareControl label='' />
+        <AudioOutputControl label='' />
+        <EndMeetingControl  />
       </ControlBar>
     </StyledControls>
   );

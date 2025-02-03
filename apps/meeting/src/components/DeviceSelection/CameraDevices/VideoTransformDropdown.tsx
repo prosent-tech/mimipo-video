@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import { Device, isVideoTransformDevice } from 'amazon-chime-sdk-js';
+import { BackgroundReplacementVideoFrameProcessor, DefaultVideoTransformDevice, Device, isVideoTransformDevice, ConsoleLogger, LogLevel, VideoFrameProcessor } from 'amazon-chime-sdk-js';
 import React, { ChangeEvent, useState, useEffect } from 'react';
 import {
   useBackgroundBlur,
@@ -52,7 +52,36 @@ export const VideoTransformDropdown: React.FC<Props> = ({
       label: VideoTransformOptions.Replacement,
       value: isBackgroundReplacementSupported === undefined || isBackgroundReplacementSupported === false ? 'Background Replacement not supported' : VideoTransformOptions.Replacement,
     },
+    {
+      label: VideoTransformOptions.ImageBackground,
+      value: VideoTransformOptions.ImageBackground,
+    }
   ];
+
+  const logger = new ConsoleLogger('VideoTransformDropdown', LogLevel.INFO);
+  const createImageBackgroundDevice = async (device: Device) => {
+    try {
+      const processors: VideoFrameProcessor[] = [];
+      if (await BackgroundReplacementVideoFrameProcessor.isSupported()) {
+        const image = await fetch('https://d2it8s1vpebaho.cloudfront.net/ogp.png');
+        const imageBlob = await image.blob();
+        const options = { imageBlob };
+        const replacementProcessor = 
+          await BackgroundReplacementVideoFrameProcessor.create(undefined, options);
+        if (replacementProcessor) {
+          processors.push(replacementProcessor);
+        }
+      }
+      return new DefaultVideoTransformDevice(
+        logger,
+        device,
+        processors
+      );
+    } catch (error) {
+      console.error('Failed to create image background device:', error);
+      throw error;
+    }
+  };
 
   // Creates a device based on the selections (None, Blur, Replacement) and uses it as input.
   const selectTransform = async (e: ChangeEvent<HTMLSelectElement>) => {
@@ -76,7 +105,10 @@ export const VideoTransformDropdown: React.FC<Props> = ({
         currentDevice = await createBackgroundBlurDevice(currentDevice as Device);
       } else if (selectedTransform === VideoTransformOptions.Replacement && isBackgroundReplacementSupported) {
         currentDevice = await createBackgroundReplacementDevice(currentDevice as Device);
+      } else if (selectedTransform === VideoTransformOptions.ImageBackground) {
+        currentDevice = await createImageBackgroundDevice(currentDevice as Device);
       }
+
       // Select the newly created device from the above logic as the video input device.
       await meetingManager.startVideoInputDevice(currentDevice);
       // Update the current selected transform.

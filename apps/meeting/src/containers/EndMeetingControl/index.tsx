@@ -43,14 +43,13 @@ const EndMeetingControl: React.FC = () => {
 
   return (
     <>
-      <ControlBarButton icon={<Phone />} onClick={toggleModal} label="Leave" />
+      <ControlBarButton icon={<Phone />} onClick={toggleModal} label="" />
       {showModal && (
         <Modal size="md" onClose={toggleModal} rootId="modal-root">
           <ModalHeader title="End Meeting" />
           <ModalBody>
             <StyledP>
-              Leave meeting or you can end the meeting for all. The meeting
-              cannot be used once it ends.
+              会議から退席するか、全員の会議を終了することができます。会議が終了すると使用できなくなります。
             </StyledP>
           </ModalBody>
           <ModalButtonGroup

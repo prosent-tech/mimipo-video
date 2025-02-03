@@ -57,9 +57,10 @@ export const VideoFiltersCpuUtilization = {
 
 // Video Transform Options
 export const VideoTransformOptions = {
-  None: 'None',
-  Blur: 'Background Blur',
-  Replacement: 'Background Replacement',
+  None: 'なし',
+  Blur: '背景ぼかし',
+  Replacement: '背景置換',
+  ImageBackground: '画像背景',
 };
 
 export type VideoTransformDropdownOptionType = {
