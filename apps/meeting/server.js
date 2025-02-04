@@ -52,7 +52,6 @@ app.post('/meetings', async (req, res) => {
         ExternalMeetingId: title.substring(0, 64),
         MeetingFeatures: ns_es === 'true' ? { Audio: { EchoReduction: 'AVAILABLE' } } : undefined,
       });
-      console.log(Meeting)
 
       meetingCache[title] = Meeting;
       attendeeCache[title] = {};
