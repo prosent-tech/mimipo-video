@@ -120,21 +120,6 @@ app.get('/attendee', (req, res) => {
   }
 });
 
-app.post('/end', async (req, res) => {
-  try {
-    const { title } = req.body;
-
-    await chimeSDKMeetings.deleteMeeting({
-      MeetingId: meetingCache[title].MeetingId,
-    });
-
-    res.status(200).end();
-  } catch (err) {
-    console.error(`Error ending meeting: ${err}`);
-    res.status(403).json({ error: err.message });
-  }
-});
-
 app.post('/startCapture', async (req, res) => {
   try {
     const { title } = req.query;
