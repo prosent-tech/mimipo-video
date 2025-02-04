@@ -46,10 +46,10 @@ const EndMeetingControl: React.FC = () => {
       <ControlBarButton icon={<Phone />} onClick={toggleModal} label="" />
       {showModal && (
         <Modal size="md" onClose={toggleModal} rootId="modal-root">
-          <ModalHeader title="End Meeting" />
+          <ModalHeader title="会議を終了する" />
           <ModalBody>
             <StyledP>
-              会議から退席するか、全員の会議を終了することができます。会議が終了すると使用できなくなります。
+              会議から退席するか、会議を終了することができます。会議が終了すると使用できなくなります。
             </StyledP>
           </ModalBody>
           <ModalButtonGroup
@@ -58,17 +58,17 @@ const EndMeetingControl: React.FC = () => {
                 key="end-meeting-for-all"
                 onClick={endMeetingForAll}
                 variant="primary"
-                label="End meeting for all"
+                label="会議を終了する"
                 closesModal
               />,
               <ModalButton
                 key="leave-meeting"
                 onClick={leaveMeeting}
                 variant="primary"
-                label="Leave Meeting"
+                label="退出する"
                 closesModal
               />,
-              <ModalButton key="cancel-meeting-ending" variant="secondary" label="Cancel" closesModal />,
+              <ModalButton key="cancel-meeting-ending" variant="secondary" label="退出しない" closesModal />,
             ]}
           />
         </Modal>

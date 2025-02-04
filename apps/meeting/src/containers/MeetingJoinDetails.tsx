@@ -40,7 +40,7 @@ const MeetingJoinDetails = () => {
     <>
       <Flex container alignItems="center" flexDirection="column">
         <PrimaryButton
-          label={isLoading ? 'Loading...' : 'ミーティングに参加する'}
+          label={isLoading ? 'Loading...' : '会議に参加する'}
           onClick={handleJoinMeeting}
         />
       </Flex>

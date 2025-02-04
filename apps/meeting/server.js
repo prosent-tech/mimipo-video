@@ -7,7 +7,9 @@ const { v4: uuidv4 } = require('uuid');
 const morganBody = require('morgan-body');
 const bodyParser = require('body-parser');
 
+const { ChimeSDKMediaPipelines } = require('@aws-sdk/client-chime-sdk-media-pipelines');
 const { ChimeSDKMeetings } = require('@aws-sdk/client-chime-sdk-meetings');
+const { STS } = require('@aws-sdk/client-sts');
 
 const port = 8080;
 const region = 'us-east-1';
@@ -18,10 +20,17 @@ app.use(express.json());
 app.use(bodyParser.json());
 morganBody(app);
 
+const chimeSDKMediaPipelines = new ChimeSDKMediaPipelines({
+  region: 'us-east-1',
+  endpoint: process.env.CHIME_SDK_MEDIA_PIPELINES_ENDPOINT || "https://media-pipelines-chime.us-east-1.amazonaws.com" });
 const chimeSDKMeetings = new ChimeSDKMeetings({ region });
+const sts = new STS({ region: 'us-east-1' });
+
+const captureS3Destination = process.env.CAPTURE_S3_DESTINATION;
 
 const meetingCache = {};
 const attendeeCache = {};
+const captureCache = {};
 
 app.post('/join', async (req, res) => {
   try {
@@ -84,6 +93,68 @@ app.post('/end', async (req, res) => {
   } catch (err) {
     console.error(`Error ending meeting: ${err}`);
     res.status(403).json({ error: err.message });
+  }
+});
+
+app.post('/startCapture', async (req, res) => {
+  try {
+    const { title } = req.query;
+    
+    if (!captureS3Destination) {
+      console.warn('Cloud media capture not available - S3 destination not configured');
+      return res.status(500).json({ error: 'Cloud media capture not configured' });
+    }
+
+    console.log(meetingCache);
+    if (!meetingCache[title]) {
+      return res.status(404).json({ error: 'Meeting not found' });
+    }
+
+    const callerInfo = await sts.getCallerIdentity({});
+    
+    const pipelineInfo = await chimeSDKMediaPipelines.createMediaCapturePipeline({
+      SourceType: "ChimeSdkMeeting",
+      SourceArn: `arn:aws:chime::${callerInfo.Account}:meeting:${meetingCache[title].MeetingId}`,
+      SinkType: "S3Bucket",
+      SinkArn: captureS3Destination
+    });
+
+    console.log(pipelineInfo);
+
+    captureCache[title] = pipelineInfo.MediaCapturePipeline;
+
+    res.status(201).json(pipelineInfo);
+  } catch (err) {
+    console.error(`Error starting capture: ${err}`);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/endCapture', async (req, res) => {
+  try {
+    const { title } = req.query;
+
+    if (!captureS3Destination) {
+      console.warn('Cloud media capture not available - S3 destination not configured');
+      return res.status(500).json({ error: 'Cloud media capture not configured' });
+    }
+
+    if (!captureCache[title]) {
+      return res.status(404).json({ error: 'No active capture found for meeting' });
+    }
+
+    // Delete the media capture pipeline
+    await chimeSDKMediaPipelines.deleteMediaCapturePipeline({
+      MediaPipelineId: captureCache[title].MediaPipelineId
+    });
+
+    // Remove from cache
+    delete captureCache[title];
+
+    res.status(200).json({});
+  } catch (err) {
+    console.error(`Error ending capture: ${err}`);
+    res.status(500).json({ error: err.message });
   }
 });
 

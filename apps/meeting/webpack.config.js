@@ -52,9 +52,11 @@ module.exports = {
     new HtmlWebpackPlugin({
       inlineSource: '.(js|css)$',
       template: __dirname + `/app/${app}.html`,
-      filename: __dirname + `/dist/${app}.html`,
+      // filename: __dirname + `/dist/${app}.html`,
+      filename: __dirname + `/dist/index.html`,
       inject: 'head',
     }),
+    // export BASE_URL=http://127.0.0.1:8080
     new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [new RegExp(`${app}`)]),
   ],
   devServer: {
@@ -76,9 +78,9 @@ module.exports = {
       overlay: false,
     },
     hot: false,
-    host: '0.0.0.0',
+    host: '127.0.0.1',
     port: 9000,
-    https: true,
+    https: false,
     open: true,
   },
 };
