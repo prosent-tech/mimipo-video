@@ -21,7 +21,6 @@
   },
   "scripts": {
     "lint": "eslint --fix",
-    "preinstall": "scripts/setup-chime-react-submodule.js",
     "build:fast": "webpack --config ./webpack.config.js",
     "build": "npm run lint && npm install && npm run build:fast",
     "start:client": "webpack serve --config ./webpack.config.dev.js",
