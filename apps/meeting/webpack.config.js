@@ -57,9 +57,6 @@ module.exports = {
       inject: 'head',
     }),
     new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [new RegExp(`${app}`)]),
-    new webpack.DefinePlugin({
-      "process.env.BASE_URL": JSON.stringify(process.env.BASE_URL),
-    }),
   ],
   devServer: {
     // MEMO: フロントが叩くAPIは8080に転送される

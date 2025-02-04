@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 
 // export const BASE_URL = routes.HOME;
-export const BASE_URL: string = process.env.BASE_URL || 'http://127.0.0.1:8080/';
+export const BASE_URL: string = 'http://127.0.0.1:8080/';
 
 export type MeetingFeatures = {
   Audio: { [key: string]: string };
