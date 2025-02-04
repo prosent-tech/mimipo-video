@@ -54,12 +54,6 @@ const MeetingForm: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const queryParams = new URLSearchParams(location.search);
-  const queryMeetingId = queryParams.get('meetingId');
-  if (queryMeetingId) {
-    setMeetingId(queryMeetingId);
-  }
-
   const handleJoinMeeting = async (e: React.FormEvent) => {
     e.preventDefault();
     const id = meetingId.trim().toLocaleLowerCase();
@@ -81,6 +75,11 @@ const MeetingForm: React.FC = () => {
     meetingManager.getAttendee = createGetAttendeeCallback(id);
 
     try {
+      const queryParams = new URLSearchParams(location.search);
+      const queryMeetingId = queryParams.get('meetingId');
+      if (queryMeetingId) {
+        setMeetingId(queryMeetingId);
+      }
       const region = 'ap-northeast-1';
       const { JoinInfo } = await createMeetingAndAttendee(id, attendeeName, region, isEchoReductionEnabled);
       setJoinInfo(JoinInfo);
