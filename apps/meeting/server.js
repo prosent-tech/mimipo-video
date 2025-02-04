@@ -13,7 +13,7 @@ const { ChimeSDKMeetings } = require('@aws-sdk/client-chime-sdk-meetings');
 const { STS } = require('@aws-sdk/client-sts');
 
 const port = 8080;
-const region = 'us-east-1';
+const region = 'ap-northeast-1';
 
 const app = express();
 
@@ -31,10 +31,10 @@ app.use(bodyParser.json());
 morganBody(app);
 
 const chimeSDKMediaPipelines = new ChimeSDKMediaPipelines({
-  region: 'us-east-1',
-  endpoint: process.env.CHIME_SDK_MEDIA_PIPELINES_ENDPOINT || "https://media-pipelines-chime.us-east-1.amazonaws.com" });
+  region: 'ap-northeast-1',
+  endpoint: process.env.CHIME_SDK_MEDIA_PIPELINES_ENDPOINT || "https://media-pipelines-chime.ap-northeast-1.amazonaws.com" });
 const chimeSDKMeetings = new ChimeSDKMeetings({ region });
-const sts = new STS({ region: 'us-east-1' });
+const sts = new STS({ region: 'ap-northeast-1' });
 
 const captureS3Destination = process.env.CAPTURE_S3_DESTINATION;
 
@@ -42,9 +42,39 @@ const meetingCache = {};
 const attendeeCache = {};
 const captureCache = {};
 
+app.post('/meetings', async (req, res) => {
+  try {
+    const { title, region = 'ap-northeast-1', ns_es } = req.body;
+    if (!meetingCache[title]) {
+      const { Meeting } = await chimeSDKMeetings.createMeeting({
+        ClientRequestToken: uuidv4(),
+        MediaRegion: region,
+        ExternalMeetingId: title.substring(0, 64),
+        MeetingFeatures: ns_es === 'true' ? { Audio: { EchoReduction: 'AVAILABLE' } } : undefined,
+      });
+      console.log(Meeting)
+
+      meetingCache[title] = Meeting;
+      attendeeCache[title] = {};
+    }
+
+    const joinInfo = {
+      JoinInfo: {
+        Title: title,
+        Meeting: meetingCache[title],
+      },
+    };
+
+    res.status(201).json(joinInfo);
+  } catch (err) {
+    console.error(`Error creating meeting: ${err}`);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.post('/join', async (req, res) => {
   try {
-    const { title, attendeeName, region = 'us-east-1', ns_es } = req.body;
+    const { title, attendeeName, region = 'ap-northeast-1', ns_es } = req.body;
 
     if (!meetingCache[title]) {
       const { Meeting } = await chimeSDKMeetings.createMeeting({
