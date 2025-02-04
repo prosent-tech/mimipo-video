@@ -3,7 +3,7 @@
 
 // export const BASE_URL = routes.HOME;
 // export const BASE_URL: string = 'http://127.0.0.1:8080/';
-export const BASE_URL: string = 'https://xf4b7ttu65.ap-northeast-1.awsapprunner.com/';
+export const BASE_URL: string = 'https://um8fktjpkq.ap-northeast-1.awsapprunner.com/';
 
 export type MeetingFeatures = {
   Audio: { [key: string]: string };

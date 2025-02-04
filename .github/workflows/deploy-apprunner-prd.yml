@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  ECR_REPOSITORY: mimipo-video
+  ECR_REPOSITORY: mimipo-video-prd
 
 jobs:
   deploy:
