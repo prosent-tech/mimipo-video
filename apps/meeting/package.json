@@ -4,6 +4,7 @@
   "dependencies": {
     "@aws-sdk/client-chime-sdk-media-pipelines": "^3.738.0",
     "@aws-sdk/client-chime-sdk-meetings": "^3.490.0",
+    "@aws-sdk/client-sts": "^3.741.0",
     "amazon-chime-sdk-component-library-react": "file:../../amazon-chime-sdk-component-library-react",
     "amazon-chime-sdk-js": "^3.23.0",
     "body-parser": "^1.20.2",
