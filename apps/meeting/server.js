@@ -6,6 +6,7 @@ const compression = require('compression');
 const { v4: uuidv4 } = require('uuid');
 const morganBody = require('morgan-body');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const { ChimeSDKMediaPipelines } = require('@aws-sdk/client-chime-sdk-media-pipelines');
 const { ChimeSDKMeetings } = require('@aws-sdk/client-chime-sdk-meetings');
@@ -15,6 +16,15 @@ const port = 8080;
 const region = 'us-east-1';
 
 const app = express();
+
+const corsOptions = {
+  origin: '*',
+  methods: '*',
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
+
+app.use(cors(corsOptions));
 app.use(compression());
 app.use(express.json());
 app.use(bodyParser.json());

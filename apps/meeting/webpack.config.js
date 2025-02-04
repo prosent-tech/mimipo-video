@@ -56,14 +56,14 @@ module.exports = {
       filename: __dirname + `/dist/index.html`,
       inject: 'head',
     }),
-    // export BASE_URL=http://127.0.0.1:8080
     new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [new RegExp(`${app}`)]),
   ],
   devServer: {
-    proxy: {
-      context: ['/join', '/attendee', '/end', '/logs'],
-      target: 'http://127.0.0.1:8080',
-    },
+    // MEMO: フロントが叩くAPIは8080に転送される
+    // proxy: {
+    //   context: ['/join', '/attendee', '/end', '/logs'],
+    //   target: 'http://127.0.0.1:8080',
+    // },
     historyApiFallback: {
       index: `/${app}.html`,
     },
