@@ -18,7 +18,6 @@ export const StyledWrapper = styled.div`
 `;
 
 export const StyledDiv = styled.div`
-  border-bottom: 0.125rem solid #e6e6e6;
   padding: 2rem;
   flex: 1;
 

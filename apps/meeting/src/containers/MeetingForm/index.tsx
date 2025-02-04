@@ -4,7 +4,6 @@
 import React, { ChangeEvent, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Checkbox,
   DeviceLabels,
   Flex,
   FormField,
@@ -14,34 +13,25 @@ import {
   ModalBody,
   ModalHeader,
   PrimaryButton,
-  Select,
   useMeetingManager,
 } from 'amazon-chime-sdk-component-library-react';
-import { DefaultBrowserBehavior, MeetingSessionConfiguration } from 'amazon-chime-sdk-js';
+import { MeetingSessionConfiguration } from 'amazon-chime-sdk-js';
 
 import { getErrorContext } from '../../providers/ErrorProvider';
 import routes from '../../constants/routes';
 import Card from '../../components/Card';
 import Spinner from '../../components/icons/Spinner';
 import DevicePermissionPrompt from '../DevicePermissionPrompt';
-import RegionSelection from './RegionSelection';
 import { createGetAttendeeCallback, createMeetingAndAttendee } from '../../utils/api';
 import { useAppState } from '../../providers/AppStateProvider';
-import { MeetingMode, VideoFiltersCpuUtilization } from '../../types';
+import { MeetingMode } from '../../types';
 import { MeetingManagerJoinOptions } from 'amazon-chime-sdk-component-library-react/lib/providers/MeetingProvider/types';
 import meetingConfig from '../../meetingConfig';
-
-const VIDEO_TRANSFORM_FILTER_OPTIONS = [
-  { value: VideoFiltersCpuUtilization.Disabled, label: 'Disable Video Filter' },
-  { value: VideoFiltersCpuUtilization.CPU10Percent, label: 'Video Filter CPU 10%' },
-  { value: VideoFiltersCpuUtilization.CPU20Percent, label: 'Video Filter CPU 20%' },
-  { value: VideoFiltersCpuUtilization.CPU40Percent, label: 'Video Filter CPU 40%' },
-];
+import { useLocation } from "react-router-dom";
 
 const MeetingForm: React.FC = () => {
   const meetingManager = useMeetingManager();
   const {
-    region,
     meetingId,
     localUserName,
     meetingMode,
@@ -49,28 +39,20 @@ const MeetingForm: React.FC = () => {
     priorityBasedPolicy,
     keepLastFrameWhenPaused,
     isWebAudioEnabled,
-    videoTransformCpuUtilization: videoTransformCpuUtilization,
     setJoinInfo,
     isEchoReductionEnabled,
-    toggleEchoReduction,
-    toggleWebAudio,
-    toggleSimulcast,
-    togglePriorityBasedPolicy,
-    toggleKeepLastFrameWhenPaused,
     setMeetingMode,
     setMeetingId,
     setLocalUserName,
     setRegion,
-    setCpuUtilization,
     skipDeviceSelection,
-    toggleMeetingJoinDeviceSelection,
   } = useAppState();
   const [meetingErr, setMeetingErr] = useState(false);
   const [nameErr, setNameErr] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { errorMessage, updateErrorMessage } = useContext(getErrorContext());
   const navigate = useNavigate();
-  const browserBehavior = new DefaultBrowserBehavior();
+  const location = useLocation();
 
   const handleJoinMeeting = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,6 +75,11 @@ const MeetingForm: React.FC = () => {
     meetingManager.getAttendee = createGetAttendeeCallback(id);
 
     try {
+      // http://127.0.0.1:9000/?meetingId=test
+      const queryParams = new URLSearchParams(location.search);
+      setMeetingId(queryParams.get('meetingId') || '');
+
+      const region = 'ap-northeast-1';
       const { JoinInfo } = await createMeetingAndAttendee(id, attendeeName, region, isEchoReductionEnabled);
       setJoinInfo(JoinInfo);
       const meetingSessionConfiguration = new MeetingSessionConfiguration(JoinInfo?.Meeting, JoinInfo?.Attendee);
@@ -145,16 +132,16 @@ const MeetingForm: React.FC = () => {
   return (
     <form>
       <Heading tag="h1" level={4} css="margin-bottom: 1rem">
-        Join a meeting
+        会議に参加する
       </Heading>
       <FormField
         field={Input}
-        label="Meeting Id"
+        label="会議ID"
         value={meetingId}
-        infoText="Anyone with access to the meeting ID can join"
+        // infoText="Anyone with access to the meeting ID can join"
         fieldProps={{
           name: 'meetingId',
-          placeholder: 'Enter Meeting Id',
+          placeholder: '会議IDを入力してください',
         }}
         errorText="Please enter a valid meeting ID"
         error={meetingErr}
@@ -167,11 +154,11 @@ const MeetingForm: React.FC = () => {
       />
       <FormField
         field={Input}
-        label="Name"
+        label="名前"
         value={localUserName}
         fieldProps={{
           name: 'name',
-          placeholder: 'Enter Your Name',
+          placeholder: '名前を入力してください',
         }}
         errorText="Please enter a valid name"
         error={nameErr}
@@ -182,94 +169,15 @@ const MeetingForm: React.FC = () => {
           }
         }}
       />
-      <RegionSelection setRegion={setRegion} region={region} />
-      <FormField
-        field={Checkbox}
-        label="Join w/o Audio and Video (spectator mode)"
-        value=""
-        checked={meetingMode === MeetingMode.Spectator}
-        onChange={(): void => {
-          if (meetingMode === MeetingMode.Spectator) {
-            setMeetingMode(MeetingMode.Attendee);
-          } else {
-            setMeetingMode(MeetingMode.Spectator);
-          }
-        }}
-      />
-      <FormField
-        field={Checkbox}
-        label="Enable Web Audio"
-        value=""
-        checked={isWebAudioEnabled}
-        onChange={toggleWebAudio}
-        infoText="Enable Web Audio to use Voice Focus"
-      />
-      {/* Amazon Chime Echo Reduction is a premium feature, please refer to the Pricing page for details.*/}
-      {isWebAudioEnabled && (
-        <FormField
-          field={Checkbox}
-          label="Enable Echo Reduction"
-          value=""
-          checked={isEchoReductionEnabled}
-          onChange={toggleEchoReduction}
-          infoText="Enable Echo Reduction (new meetings only)"
-        />
-      )}
-      {/* BlurSelection */}
-      {/* Background Video Transform Selections */}
-      <FormField
-        field={Select}
-        options={VIDEO_TRANSFORM_FILTER_OPTIONS}
-        onChange={(e: ChangeEvent<HTMLSelectElement>): void => {
-          setCpuUtilization(e.target.value);
-        }}
-        value={videoTransformCpuUtilization}
-        label="Background Filters CPU Utilization"
-      />
-      {/* Video uplink and downlink policies */}
-      {browserBehavior.isSimulcastSupported() && (
-        <FormField
-          field={Checkbox}
-          label="Enable Simulcast"
-          value=""
-          checked={enableSimulcast}
-          onChange={toggleSimulcast}
-        />
-      )}
-
-      {browserBehavior.supportDownlinkBandwidthEstimation() && (
-        <FormField
-          field={Checkbox}
-          label="Use Priority-Based Downlink Policy"
-          value=""
-          checked={priorityBasedPolicy !== undefined}
-          onChange={togglePriorityBasedPolicy}
-        />
-      )}
-      <FormField
-        field={Checkbox}
-        label="Keep Last Frame When Paused"
-        value=""
-        checked={keepLastFrameWhenPaused}
-        onChange={toggleKeepLastFrameWhenPaused}
-      />
-      <FormField
-        field={Checkbox}
-        label="Skip meeting join device selection"
-        value=""
-        checked={skipDeviceSelection}
-        onChange={toggleMeetingJoinDeviceSelection}
-        infoText="Please select the devices manually to successfully join a meeting"
-      />
       <Flex container layout="fill-space-centered" style={{ marginTop: '2.5rem' }}>
-        {isLoading ? <Spinner /> : <PrimaryButton label="Continue" onClick={handleJoinMeeting} />}
+        {isLoading ? <Spinner /> : <PrimaryButton label="続ける" onClick={handleJoinMeeting} />}
       </Flex>
       {errorMessage && (
         <Modal size="md" onClose={closeError}>
           <ModalHeader title={`Meeting ID: ${meetingId}`} />
           <ModalBody>
             <Card
-              title="Unable to join meeting"
+              title="会議に参加できませんでした"
               description="There was an issue finding that meeting. The meeting may have already ended, or your authorization may have expired."
               smallText={errorMessage}
             />
