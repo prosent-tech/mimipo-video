@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: MIT-0
 
 // export const BASE_URL = routes.HOME;
-// export const BASE_URL: string = 'http://127.0.0.1:8080/';
-export const BASE_URL: string = 'https://um8fktjpkq.ap-northeast-1.awsapprunner.com/';
+// export const BASE_URL: string = 'http://127.0.0.1:8080/'; //  Local
+export const BASE_URL: string = 'https://nppnsm2j69.ap-northeast-1.awsapprunner.com/'; //  Production
+// export const BASE_URL: string = 'https://nyca7fzgpv.ap-northeast-1.awsapprunner.com/'; //  Staging
 
 export type MeetingFeatures = {
   Audio: { [key: string]: string };
