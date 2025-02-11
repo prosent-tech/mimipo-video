@@ -7,13 +7,11 @@ import {
   ControlBarButton,
   Phone,
   Modal,
-  ModalBody,
   ModalHeader,
   ModalButton,
   ModalButtonGroup,
 } from 'amazon-chime-sdk-component-library-react';
 
-import { StyledP } from './Styled';
 import routes from '../../constants/routes';
 
 const EndMeetingControl: React.FC = () => {
@@ -30,22 +28,17 @@ const EndMeetingControl: React.FC = () => {
       <ControlBarButton icon={<Phone />} onClick={toggleModal} label="" />
       {showModal && (
         <Modal size="md" onClose={toggleModal} rootId="modal-root">
-          <ModalHeader title="会議を終了する" />
-          <ModalBody>
-            <StyledP>
-              会議から退席するか、会議を終了することができます。会議が終了すると使用できなくなります。
-            </StyledP>
-          </ModalBody>
+          <ModalHeader title="診察室を退出する" />
           <ModalButtonGroup
             primaryButtons={[
               <ModalButton
                 key="leave-meeting"
                 onClick={leaveMeeting}
                 variant="primary"
-                label="退出する"
+                label="退室する"
                 closesModal
               />,
-              <ModalButton key="cancel-meeting-ending" variant="secondary" label="退出しない" closesModal />,
+              <ModalButton key="cancel-meeting-ending" variant="secondary" label="退室しない" closesModal />,
             ]}
           />
         </Modal>

@@ -48,7 +48,7 @@ const MeetingControls: React.FC = () => {
           label=""
         />
         { isWebAudioEnabled ? <AudioInputVFControl muteLabel='' unmuteLabel='' /> :  <AudioInputControl muteLabel='' unmuteLabel='' /> }
-        { videoTransformsEnabled ? <VideoInputTransformControl label='' /> : <VideoInputControl label='' /> }
+        { videoTransformsEnabled ? <VideoInputTransformControl label='' backgroundBlurLabel='背景ぼかし' backgroundReplacementLabel='背景置換' /> : <VideoInputControl label='' /> }
         <ContentShareControl label='' />
         <AudioOutputControl label='' />
         <EndMeetingControl  />

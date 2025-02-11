@@ -11,7 +11,6 @@ import {
   Input,
   Modal,
   ModalBody,
-  ModalHeader,
   PrimaryButton,
   useMeetingManager,
 } from 'amazon-chime-sdk-component-library-react';
@@ -32,7 +31,6 @@ import { useLocation } from "react-router-dom";
 const MeetingForm: React.FC = () => {
   const meetingManager = useMeetingManager();
   const {
-    meetingId,
     localUserName,
     meetingMode,
     enableSimulcast,
@@ -47,7 +45,6 @@ const MeetingForm: React.FC = () => {
     setRegion,
     skipDeviceSelection,
   } = useAppState();
-  const [meetingErr, setMeetingErr] = useState(false);
   const [nameErr, setNameErr] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { errorMessage, updateErrorMessage } = useContext(getErrorContext());
@@ -56,32 +53,27 @@ const MeetingForm: React.FC = () => {
 
   const handleJoinMeeting = async (e: React.FormEvent) => {
     e.preventDefault();
-    const id = meetingId.trim().toLocaleLowerCase();
+
+    const queryParams = new URLSearchParams(location.search);
+    const meetingId = queryParams.get('meetingId') || '';
     const attendeeName = localUserName.trim();
 
-    if (!id || !attendeeName) {
-      if (!attendeeName) {
-        setNameErr(true);
-      }
+    if (!attendeeName) {
+      setNameErr(true);
+      return;
+    }
 
-      if (!id) {
-        setMeetingErr(true);
-      }
-
+    if (!meetingId) {
+      updateErrorMessage('有効な診察室IDを入力してください');
       return;
     }
 
     setIsLoading(true);
-    meetingManager.getAttendee = createGetAttendeeCallback(id);
+    meetingManager.getAttendee = createGetAttendeeCallback(meetingId);
 
     try {
-      const queryParams = new URLSearchParams(location.search);
-      const queryMeetingId = queryParams.get('meetingId');
-      if (queryMeetingId) {
-        setMeetingId(queryMeetingId);
-      }
       const region = 'ap-northeast-1';
-      const { JoinInfo } = await createMeetingAndAttendee(id, attendeeName, region, isEchoReductionEnabled);
+      const { JoinInfo } = await createMeetingAndAttendee(meetingId, attendeeName, region, isEchoReductionEnabled);
       setJoinInfo(JoinInfo);
       const meetingSessionConfiguration = new MeetingSessionConfiguration(JoinInfo?.Meeting, JoinInfo?.Attendee);
       if (
@@ -133,26 +125,8 @@ const MeetingForm: React.FC = () => {
   return (
     <form>
       <Heading tag="h1" level={4} css="margin-bottom: 1rem">
-        会議に参加する
+        診察室に入る
       </Heading>
-      <FormField
-        field={Input}
-        label="会議ID"
-        value={meetingId}
-        // infoText="Anyone with access to the meeting ID can join"
-        fieldProps={{
-          name: 'meetingId',
-          placeholder: '会議IDを入力してください',
-        }}
-        errorText="Please enter a valid meeting ID"
-        error={meetingErr}
-        onChange={(e: ChangeEvent<HTMLInputElement>): void => {
-          setMeetingId(e.target.value);
-          if (meetingErr) {
-            setMeetingErr(false);
-          }
-        }}
-      />
       <FormField
         field={Input}
         label="名前"
@@ -161,7 +135,7 @@ const MeetingForm: React.FC = () => {
           name: 'name',
           placeholder: '名前を入力してください',
         }}
-        errorText="Please enter a valid name"
+        errorText="有効な名前を入力してください"
         error={nameErr}
         onChange={(e: ChangeEvent<HTMLInputElement>): void => {
           setLocalUserName(e.target.value);
@@ -175,11 +149,10 @@ const MeetingForm: React.FC = () => {
       </Flex>
       {errorMessage && (
         <Modal size="md" onClose={closeError}>
-          <ModalHeader title={`Meeting ID: ${meetingId}`} />
           <ModalBody>
             <Card
-              title="会議に参加できませんでした"
-              description="There was an issue finding that meeting. The meeting may have already ended, or your authorization may have expired."
+              title="診察室に参加できませんでした"
+              description="診察がすでに終了しているか、有効期限が切れている可能性があります。"
               smallText={errorMessage}
             />
           </ModalBody>

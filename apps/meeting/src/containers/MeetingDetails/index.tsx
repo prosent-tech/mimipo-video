@@ -9,9 +9,10 @@ const MeetingDetails = () => {
   return (
     <Flex container layout="fill-space-centered">
       <Flex mb="2rem" mr={{ md: '2rem' }} px="1rem">
-        {/* <Heading level={4} tag="h1" mb={2}>
-          Mimipoオンラインクリニックへようこそ！
-        </Heading> */}
+        <span style={{ fontSize: '20px', lineHeight: '1.5' }}>
+          ＊別の診察状況により医師またはカウンセラーの入室が遅れる可能性がございます。
+          ご入室のままでお待ち下さい。診察予約時間から5分以上経っても入室がない場合はLINEまでご連絡いただけますと幸いです。
+        </span>
       </Flex>
     </Flex>
   );
