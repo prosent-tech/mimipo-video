@@ -124,7 +124,7 @@ const MeetingForm: React.FC = () => {
 
   return (
     <form>
-      <Heading tag="h1" level={4} css="margin-bottom: 1rem">
+      <Heading tag="h1" level={5} css="margin-bottom: 1rem">
         診察室に入る
       </Heading>
       <FormField
