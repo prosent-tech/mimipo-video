@@ -4,7 +4,6 @@
 import React from 'react';
 import {
   PreviewVideo,
-  QualitySelection,
 } from 'amazon-chime-sdk-component-library-react';
 
 import { StyledInputGroup } from '../Styled';
@@ -17,9 +16,6 @@ const CameraDevices = () => {
   const videoTransformsEnabled = videoTransformCpuUtilization !== VideoFiltersCpuUtilization.Disabled;
   return (
     <div>
-      <StyledInputGroup>
-        <QualitySelection label='品質' labelForUnselected='ビデオ品質を選択' />
-      </StyledInputGroup>
       { videoTransformsEnabled ?
         <StyledInputGroup>
           <VideoTransformDropdown label='背景' />
