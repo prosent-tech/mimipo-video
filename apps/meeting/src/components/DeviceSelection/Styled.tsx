@@ -20,7 +20,7 @@ export const StyledWrapper = styled.div`
   width: 100%;
   max-width: 65rem;
   height: auto;
-  padding: 1rem 0 3rem 0;
+  padding: 1rem 0 1rem 0;
 
   > * {
     flex-basis: auto;
